@@ -9,36 +9,124 @@
 
 %locations
 %union{
-    Node* Node_value;
+    Node* value;
 }
-%nonassoc LOWER_ERROR
-%nonassoc <Node_value> ILLEGAL_TOKEN
-%nonassoc <Node_value> LOWER_THAN_ELSE
-%nonassoc <Node_value> ELSE
-%token <Node_value> TYPE STRUCT
-%token <Node_value> IF WHILE RETURN
-%token <Node_value> INT
-%token <Node_value> FLOAT
-%token <Node_value> CHAR
-%token <Node_value> ID
-%right <Node_value> ASSIGN
-%left <Node_value> OR
-%left <Node_value> AND
-%left <Node_value> LT LE GT GE NE EQ
-%nonassoc LOWER_MINUS
-%left <Node_value> PLUS MINUS
-%left <Node_value> MUL DIV
-%right <Node_value> NOT
-%left <Node_value> LP RP LB RB DOT
-%token <Node_value> SEMI COMMA
-%token <Node_value> LC RC
 
-%type <Node_value> Program ExtDefList
-%type <Node_value> ExtDef ExtDecList Specifier StructSpecifier VarDec
-%type <Node_value> FunDec VarList ParamDec CompSt StmtList Stmt DefList
-%type <Node_value> Def DecList Dec Args Exp
+%token <value> INT FLOAT CHAR
+%token <value> ID
+%right <value> ASSIGN
+%left <value> OR
+%left <value> AND
+%left <value> LT LE GT GE NE EQ
+%left <value> PLUS MINUS
+%left <value> MUL DIV
+%left UMINUS
+%right <value> NOT
+%left <value> LP RP LB RB DOT
+%token <value> SEMI COMMA
+%token <value> LC RC
+
+%type <value> Program ExtDefList
+%type <value> ExtDef ExtDecList Specifier StructSpecifier VarDec
+%type <value> FunDec VarList ParamDec CompSt StmtList Stmt DefList
+%type <value> Def DecList Dec Args Exp
 %%
 /* high-level definition */
+Program: ExitDefList
+
+ExtDefList:
+    /* NULL */
+    | ExtDef ExtDefList
+    ;
+ExtDef:
+    Specifier ExtDecList SEMI
+    | Specifier SEMI
+    | Specifier FuncDec CompSt
+    ;
+ExtDecList:
+    VarDec
+    | VarDec COMMMA ExtDecList
+;
+/* declarator */
+VarDec:
+    ID
+    | VarDec LB INT RB
+;
+FunDec:
+    ID LP VarList RP
+    | ID LP RP
+;
+VarList:
+    ParamDec COMMA VarList
+    | ParamDec
+;
+ParamDec:
+    Specifier VarDec
+;
+/* statement */
+CompSt:
+    LC DefList StmtList RC
+;
+StmtList:
+    /* NULL */
+    | Stmt StmtList
+;
+Stmt:
+    Ecp SEMI
+    | CompSt
+    | RETURN Exp SEMI
+    | IF LP Exp RP Stmt
+    | IF LP Exp RP Stmt ELSE Stmt
+    | WHILE LP Exp RP Stmt
+;
+
+/* local definition */
+DefList:
+    /* NULL */
+    | Def DefList
+;
+Def:
+    Specifier DecList SEMI
+;
+DecList:
+    Dec
+    | Dec COMMA DecList
+;
+Dec:
+    VarDec
+    | VarDec ASSIGN Exp
+;
+
+/* expression */
+Exp:
+    Exp ASSIGN Exp
+    | Exp AND Exp
+    | Exp OR Exp
+    | Exp LT Exp
+    | Exp LE Exp
+    | Exp GT Exp
+    | Exp GE Exp
+    | Exp NE Exp
+    | Exp EQ Exp
+    | Exp PLUS Exp
+    | Exp MINUS Exp
+    | Exp MUL Exp
+    | Exp DIV Exp
+    | LP Exp RP
+    | MINUS Exp %prec UMINUS
+    | NOT Exp
+    | ID LP Args RP
+    | ID LP RP
+    | Exp LB Exp RB
+    | Exp DOT ID
+    | ID
+    | INT
+    | FLOAT
+    | CHAR
+;
+Args: Exp COMMA Args
+    | Exp
+;
 %%
 void yyerror(const char *s){
     has_err=1;

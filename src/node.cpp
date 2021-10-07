@@ -1,14 +1,3 @@
-/*
- * @Github: https://github.com/Certseeds/CS323_Compilers_2020F
- * @Organization: SUSTech
- * @Author: nanoseeds
- * @Date: 2020-10-11 10:55:36
- * @LastEditors: nanoseeds
- * @LastEditTime: 2020-10-11 11:48:02
- */
-//
-// Created by nanos on 2020/10/7.
-//
 
 #include "node.hpp"
 
