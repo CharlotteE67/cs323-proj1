@@ -1,4 +1,10 @@
 %{
+    #include "spl_node.h"
+    int isError = 0;
+    #define LEXER_ERROR_OUTPUT stdout
+%}
+
+%{
     #include "syntax.tab.h"
     #include "stdlib.h"
 
@@ -34,41 +40,43 @@ ID {letter_}({letter_}|{num}){0,31}
 %%
 "//" { char c = yyinput();while(c!='\n'){c=yyinput();}}
 "\n" {yycolumn = 1;}
-"int"|"float"|"char" { return TYPE; }
-"struct" { return STRUCT; }
-"if" { return IF; }
-"else" { return ELSE; }
-"while" { return WHILE; }
-"return" { return RETURN; }
-"." { return DOT; }
-";" { return SEMI; }
-"," { return COMMA; }
-"=" { return ASSIGN; }
-"<" { return LT; }
-"<=" { return LE; }
-">" { return GT; }
-">=" { return GE; }
-"!=" { return NE; }
-"==" { return EQ; }
-"+" { return PLUS; }
-"-" { return MINUS; }
-"*" { return MUL; }
-"/" { return DIV; }
-"&&" { return AND; }
-"||" { return OR; }
-"!" { return NOT; }
-"(" { return LP; }
-")" { return RP; }
-"[" { return LB; }
-"]" { return RB; }
-"{" { return LC; }
-"}" { return RC; }
+"int" { yylval.value = new Node("INT",Node_TYPE::DTYPE);return TYPE; }
+"float" { yylval.value = new Node("FLOAT",Node_TYPE::DTYPE);return TYPE; }
+"char" { yylval.value = new Node("CHAR",Node_TYPE::DTYPE);return TYPE; }
+"struct" { yylval.value = new Node("STRUCT");return STRUCT; }
+"if" { yylval.value = new Node("IF");return IF; }
+"else" { yylval.value = new Node("ELSE");return ELSE; }
+"while" { yylval.value = new Node("WHILE");return WHILE; }
+"return" { yylval.value = new Node("RETURN");return RETURN; }
+"." { yylval.value = new Node("DOT");return DOT; }
+";" { yylval.value = new Node("SEMI");return SEMI; }
+"," { yylval.value = new Node("COMMA");return COMMA; }
+"=" { yylval.value = new Node("ASSIGN");return ASSIGN; }
+"<" { yylval.value = new Node("LT");return LT; }
+"<=" { yylval.value = new Node("LE");return LE; }
+">" { yylval.value = new Node("GT");return GT; }
+">=" { yylval.value = new Node("GE");return GE; }
+"!=" { yylval.value = new Node("NE");return NE; }
+"==" { yylval.value = new Node("EQ");return EQ; }
+"+" { yylval.value = new Node("PLUS");return PLUS; }
+"-" { yylval.value = new Node("MINUS");return MINUS; }
+"*" { yylval.value = new Node("MUL");return MUL; }
+"/" { yylval.value = new Node("DIV");return DIV; }
+"&&" { yylval.value = new Node("AND");return AND; }
+"||" { yylval.value = new Node("OR");return OR; }
+"!" { yylval.value = new Node("NOT");return NOT; }
+"(" { yylval.value = new Node("LP");return LP; }
+")" { yylval.value = new Node("RP");return RP; }
+"[" { yylval.value = new Node("LB");return LB; }
+"]" { yylval.value = new Node("RB");return RB; }
+"{" { yylval.value = new Node("LC");return LC; }
+"}" { yylval.value = new Node("RC");return RC; }
 [ \n\r\t]+ {}
 
-{ID} {return ID;}
-{INT_10} {return INT;}
+{ID} {yylval.value = new Node(yytext,Node_TYPE::ID);return ID;}
+{INT_10} {yylval.value = new Node(atoi(yytext));return INT;}
 {INT_16} {return INT;}
-{FLOAT} {return FLOAT;}
+{FLOAT} {yylval.value = new Node(static_cast<float>(atof(yytext)));return FLOAT;}
 {CHAR} {return CHAR;}
 {CHAR_16} {return CHAR;} 
 
