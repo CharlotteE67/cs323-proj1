@@ -4,7 +4,18 @@
 
     #define EXIT_OK 0
     #define EXIT_FAIL 1
+
+    #include"syntax.tab.h"
+    /* library inclusions */ 
+    int yycolumn = 1;
+    #define YY_USER_ACTION \
+        yylloc.first_line = yylineno; \
+        yylloc.last_line = yylineno; \
+        yylloc.first_column = yycolumn; \
+        yylloc.last_column = yycolumn + yyleng;\
+        yycolumn += yyleng;
 %}
+
 %option yylineno
 
 num [0-9]
@@ -22,6 +33,7 @@ ID {letter_}({letter_}|{num}){0,31}
 
 %%
 "//" { char c = yyinput();while(c!='\n'){c=yyinput();}}
+"\n" {yycolumn = 1;}
 "int"|"float"|"char" { return TYPE; }
 "struct" { return STRUCT; }
 "if" { return IF; }
