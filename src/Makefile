@@ -15,16 +15,16 @@ CPP = $(GPP) $(CXX_FLAGS)
 	$(FLEX) lex.l
 .syntax:syntax.y
 	$(BISON) -t -d -v syntax.y
-.node: .lex .syntax
-	$(CPP) -c node.cpp -o node.o
-	@ar -rc libnode.a node.o
+.spl_node: .lex .syntax
+	$(CPP) -c spl_node.cpp -o spl_node.o
+	@ar -rc libspl_node.a spl_node.o
 .yyerror: .lex .syntax
 	$(CPP) -c yyerror_myself.cpp -o yyerror_myself.o
 	@ar -rc libyyerror_myself.a yyerror_myself.o
 .parser: .lex .syntax
-	$(CPP) -c syntax.tab.c -o parser.o  -lfl -ly
+	$(CPP) -c syntax.tab.c -o parser.o -lfl -ly
 	@ar -rc libparser.a parser.o
-splc: .node .yyerror .parser
-	$(CPP) main.cpp -static -L. -lnode -lyyerror_myself -lparser -o splc
+splc: .spl_node .parser
+	$(CPP) main.cpp -static -L. -lspl_node -lparser -o splc
 clean:
 	@rm -rf $(MAKE_PATH)/ lex.yy.c syntax.tab.* *.out *.o *.a *.so syntax.output splc

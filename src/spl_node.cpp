@@ -1,4 +1,4 @@
-#include "spl_node.h"
+#include "spl_node.hpp"
 
 using namespace std;
 
@@ -65,6 +65,6 @@ Node::Node(string name,int line_no){
     this->TYPE = Node_TYPE::LINE;
 }
 
-void Node::set_child(vector<Node*> sub){
+void Node::set_child(vector<Node*>& sub){
     this->sub_nodes = sub;
 }

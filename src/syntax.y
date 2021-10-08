@@ -1,11 +1,10 @@
 %{
     #include "lex.yy.c"
-    #include "yyerror_myself.hpp"
-    #define SYNTAX_ERR_OP stdout
+
     void yyerror(const char *s);
     void lineinfor(void);
-    Node* root_node;
-    extern bool has_err = 0;
+    Node* root;
+    extern bool has_err;
 %}
 
 %locations
@@ -13,6 +12,11 @@
     Node* value;
 }
 
+
+%nonassoc <value> ELSE
+%token <value> TYPE STRUCT
+%token <value> ERR_TOKEN
+%token <value> IF WHILE RETURN
 %token <value> INT FLOAT CHAR
 %token <value> ID
 %right <value> ASSIGN
@@ -33,100 +37,114 @@
 %type <value> Def DecList Dec Args Exp
 %%
 /* high-level definition */
-Program: ExitDefList
+Program:
+    ExtDefList { root = $$ = new Node("Program",@$.first_line); vector<Node*> vec = {$1}; $$->set_child(vec); }
+;
 
 ExtDefList:
-    /* NULL */
-    | ExtDef ExtDefList
+    /* NULL */ { $$ = new Node("ExtDefList", @$.first_line);}
+    | ExtDef ExtDefList { $$ = new Node("ExtDefList", @$.first_line); vector<Node*> vec = {$1, $2}; $$->set_child(vec); }
     ;
 ExtDef:
-    Specifier ExtDecList SEMI
-    | Specifier SEMI
-    | Specifier FuncDec CompSt
+    Specifier ExtDecList SEMI { $$ = new Node("ExtDef", @$.first_line); vector<Node*> vec = {$1, $2, $3}; $$->set_child(vec); }
+    | Specifier SEMI { $$ = new Node("ExtDef", @$.first_line); vector<Node*> vec = {$1, $2}; $$->set_child(vec);}
+    | Specifier FunDec CompSt { $$ = new Node("ExtDef", @$.first_line); vector<Node*> vec = {$1, $2, $3}; $$->set_child(vec); }
     ;
 ExtDecList:
-    VarDec
-    | VarDec COMMMA ExtDecList
+    VarDec { $$ = new Node("ExtDecList", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | VarDec COMMA ExtDecList { $$ = new Node("ExtDecList", @$.first_line); vector<Node*> vec = {$1, $2, $3}; $$->set_child(vec); }
 ;
+
+/* specifier */
+Specifier:
+    TYPE
+    | StructSpecifier
+;
+StructSpecifier:
+    STRUCT ID LC DefList RC
+    | STRUCT ID
+;
+
 /* declarator */
 VarDec:
-    ID
-    | VarDec LB INT RB
+    ID { $$ = new Node("VarDec", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | VarDec LB INT RB { $$ = new Node("VarDec", @$.first_line); vector<Node*> vec = {$1, $2, $3, $4}; $$->set_child(vec); }
 ;
 FunDec:
-    ID LP VarList RP
-    | ID LP RP
+    ID LP VarList RP { $$ = new Node("FunDec", @$.first_line); vector<Node*> vec = {$1, $2, $3, $4}; $$->set_child(vec); }
+    | ID LP RP { $$ = new Node("FunDec", @$.first_line); vector<Node*> vec = {$1, $2, $3}; $$->set_child(vec); }
 ;
 VarList:
-    ParamDec COMMA VarList
-    | ParamDec
+    ParamDec COMMA VarList { $$ = new Node("VarList", @$.first_line); vector<Node*> vec = {$1, $2, $3}; $$->set_child(vec); }
+    | ParamDec { $$ = new Node("VarList", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
 ;
 ParamDec:
-    Specifier VarDec
+    Specifier VarDec { $$ = new Node("ParamDec", @$.first_line); vector<Node*> vec = {$1, $2}; $$->set_child(vec); }
 ;
 /* statement */
 CompSt:
-    LC DefList StmtList RC
+    LC DefList StmtList RC { $$ = new Node("CompSt", @$.first_line); vector<Node*> vec = {$1, $2, $3, $4}; $$->set_child(vec); }
 ;
 StmtList:
-    /* NULL */
-    | Stmt StmtList
+    /* NULL */ { $$ = new Node("StmtList", @$.first_line);}
+    | Stmt StmtList { $$ = new Node("StmtList", @$.first_line); vector<Node*> vec = {$1, $2}; $$->set_child(vec); }
 ;
 Stmt:
-    Ecp SEMI
-    | CompSt
-    | RETURN Exp SEMI
-    | IF LP Exp RP Stmt
-    | IF LP Exp RP Stmt ELSE Stmt
-    | WHILE LP Exp RP Stmt
+    Exp SEMI { $$ = new Node("Stmt", @$.first_line); vector<Node*> vec = {$1, $2}; $$->set_child(vec); }
+    | CompSt { $$ = new Node("Stmt", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | RETURN Exp SEMI  { $$ = new Node("Stmt", @$.first_line); vector<Node*> vec = {$1, $2, $3}; $$->set_child(vec); }
+    | IF LP Exp RP Stmt { $$ = new Node("Stmt", @$.first_line); vector<Node*> vec = {$1, $2, $3, $4, $5}; $$->set_child(vec); }
+    | IF LP Exp RP Stmt ELSE Stmt { $$ = new Node("Stmt", @$.first_line); vector<Node*> vec = {$1, $2, $3, $4, $5,  $6, $7}; $$->set_child(vec); }
+    | WHILE LP Exp RP Stmt { $$ = new Node("Stmt", @$.first_line); vector<Node*> vec = {$1, $2, $3, $4, $5}; $$->set_child(vec); }
 ;
 
 /* local definition */
 DefList:
-    /* NULL */
-    | Def DefList
+    /* NULL */ { $$ = new Node("DefList", @$.first_line);}
+    | Def DefList { $$ = new Node("DefList", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
 ;
 Def:
-    Specifier DecList SEMI
+    Specifier DecList SEMI { $$ = new Node("Def", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
 ;
 DecList:
-    Dec
-    | Dec COMMA DecList
+    Dec { $$ = new Node("DecList", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Dec COMMA DecList { $$ = new Node("DecList", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
 ;
 Dec:
-    VarDec
-    | VarDec ASSIGN Exp
+    VarDec { $$ = new Node("Dec", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | VarDec ASSIGN Exp { $$ = new Node("Dec", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
 ;
 
 /* expression */
 Exp:
-    Exp ASSIGN Exp
-    | Exp AND Exp
-    | Exp OR Exp
-    | Exp LT Exp
-    | Exp LE Exp
-    | Exp GT Exp
-    | Exp GE Exp
-    | Exp NE Exp
-    | Exp EQ Exp
-    | Exp PLUS Exp
-    | Exp MINUS Exp
-    | Exp MUL Exp
-    | Exp DIV Exp
-    | LP Exp RP
-    | MINUS Exp %prec UMINUS
-    | NOT Exp
-    | ID LP Args RP
-    | ID LP RP
-    | Exp LB Exp RB
-    | Exp DOT ID
-    | ID
-    | INT
-    | FLOAT
-    | CHAR
+    Exp ASSIGN Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp AND Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp OR Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp LT Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp LE Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp GT Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp GE Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp NE Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp EQ Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp PLUS Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp MINUS Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp MUL Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp DIV Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | LP Exp RP { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | MINUS Exp %prec UMINUS { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | NOT Exp { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | ID LP Args RP { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | ID LP RP { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp LB Exp RB { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1, $2, $3}; $$->set_child(vec); }
+    | Exp DOT ID { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1, $2, $3}; $$->set_child(vec); }
+    | ID { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | INT { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | FLOAT { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | CHAR { $$ = new Node("Exp", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
 ;
-Args: Exp COMMA Args
-    | Exp
+Args:
+    Exp COMMA Args { $$ = new Node("Args", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
+    | Exp { $$ = new Node("Args", @$.first_line);vector<Node*> vec = {$1}; $$->set_child(vec); }
 ;
 %%
 void yyerror(const char *s){

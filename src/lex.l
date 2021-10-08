@@ -1,7 +1,8 @@
 %{
-    #include "spl_node.h"
-    int has_err = 0;
+    #include "spl_node.hpp"
+    bool has_err = 0;
     #define LEX_ERR_OP stdout
+    #define SYNTAX_ERR_OP stdout
 %}
 
 %{
@@ -22,13 +23,13 @@
         yycolumn += yyleng;
 %}
 
+%option noyywrap
 %option yylineno
 
 num [0-9]
 num_16 [0-9a-fA-F]
 letter [a-zA-Z]
 letter_ [a-zA-Z_]
-multi_comment \/\*(?:\*(?!\/)|[^\*])*\*\/
 
 INT_10 ([1-9]{num}*)|0
 INT_16 0[xX](0|[1-9A-Fa-f]{num_16}*)
@@ -53,7 +54,7 @@ CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
 
 %%
 "//" { char c = yyinput();while(c!='\n'){c=yyinput();}}
-{multi_comment} {/*multi-line comment, do nothing */}
+
 "\n" {yycolumn = 1;}
 "int" { 
     yylval.value = new Node("INT",Node_TYPE::DTYPE);
@@ -175,23 +176,3 @@ CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
     return ERR_TOKEN;
 }
 %%
-
-int main(int argc,char **argv){
-    //from lab2 sample
-    char *file_path;
-    if(argc < 2){
-        fprintf(LEX_ERR_OP, "Usage: %s <file_path>\n", argv[0]);
-        return EXIT_FAIL;
-    } else if(argc == 2){
-        file_path = argv[1];
-        if(!(yyin = fopen(file_path, "r"))){
-            perror(argv[1]);
-            return EXIT_FAIL;
-        }
-        yylex();
-        return EXIT_OK;
-    } else{
-        fputs("Too many arguments! Expected: 2.\n", LEX_ERR_OP);
-        return EXIT_FAIL;
-    }
-}

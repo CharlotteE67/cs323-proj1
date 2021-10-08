@@ -1,6 +1,6 @@
 
 #include "node.hpp"
-
+#include <vector>
 #include <utility>
 
 void Node::print(int space) {

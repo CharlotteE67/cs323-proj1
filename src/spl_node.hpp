@@ -3,7 +3,7 @@
 
 #include <string>
 #include <iostream>
-#include <bits/stdc++.h>
+#include <vector>
 
 using namespace std;
 
@@ -43,7 +43,7 @@ public:
     Node(string name,Node_TYPE type);
     Node(string name,int line_no);
 
-    void set_child(vector<Node*> sub);
+    void set_child(vector<Node*>&);
 
 
 };
