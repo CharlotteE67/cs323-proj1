@@ -36,15 +36,35 @@ CHAR '.'
 CHAR_16 '\\x(0|[1-9a-fA-F]{num_16})'
 ID {letter_}({letter_}|{num}){0,31}
 
+ID_ERR_TOOLONG
 
+INT_10_ERR_0STA
+
+CHAR_ERR_TOOLONG
+
+INT_16_ERR_CHARILL 
+INT_16_ERR_MORE0
+
+CHAR_16_ERR_CHARILL
+CHAR_16_ERR_MORE0
+CHAR_16_ERR_TOOLONG
 
 
 %%
 "//" { char c = yyinput();while(c!='\n'){c=yyinput();}}
 "\n" {yycolumn = 1;}
-"int" { yylval.value = new Node("INT",Node_TYPE::DTYPE);return TYPE; }
-"float" { yylval.value = new Node("FLOAT",Node_TYPE::DTYPE);return TYPE; }
-"char" { yylval.value = new Node("CHAR",Node_TYPE::DTYPE);return TYPE; }
+"int" { 
+    yylval.value = new Node("INT",Node_TYPE::DTYPE);
+    return TYPE; 
+}
+"float" { 
+    yylval.value = new Node("FLOAT",Node_TYPE::DTYPE);
+    return TYPE; 
+}
+"char" { 
+    yylval.value = new Node("CHAR",Node_TYPE::DTYPE);
+    return TYPE; 
+}
 "struct" { yylval.value = new Node("STRUCT");return STRUCT; }
 "if" { yylval.value = new Node("IF");return IF; }
 "else" { yylval.value = new Node("ELSE");return ELSE; }
@@ -75,12 +95,30 @@ ID {letter_}({letter_}|{num}){0,31}
 "}" { yylval.value = new Node("RC");return RC; }
 [ \n\r\t]+ {}
 
-{ID} {yylval.value = new Node(yytext,Node_TYPE::ID);return ID;}
-{INT_10} {yylval.value = new Node(atoi(yytext));return INT;}
-{INT_16} {return INT;}
-{FLOAT} {yylval.value = new Node(static_cast<float>(atof(yytext)));return FLOAT;}
-{CHAR} {return CHAR;}
-{CHAR_16} {return CHAR;} 
+{ID} {
+    yylval.value = new Node(yytext,Node_TYPE::ID);
+    return ID;
+}
+{INT_10} {
+    yylval.value = new Node(atoi(yytext));
+    return INT;
+}
+{INT_16} {
+    yylval.value = new Node(static_cast<int>(strtol(yytext,nullptr,0)));
+    return INT;
+}
+{FLOAT} {
+    yylval.value = new Node(static_cast<float>(atof(yytext)));
+    return FLOAT;
+}
+{CHAR} {
+    yylval.value = new Node(yytext,Node_TYPE::CHAR);
+    return CHAR;
+}
+{CHAR_16} {
+    yylval.value = new Node(yytext,Node_TYPE::CHAR);
+    return CHAR;
+} 
 
 
 

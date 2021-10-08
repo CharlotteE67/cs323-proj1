@@ -14,7 +14,7 @@ void Node::print(int space){
             break;
         }
         case Node_TYPE::CHAR:{
-            printf("CHAR:%c\n",this->char_value);
+            printf("CHAR:%s\n",this->name.c_str());
             break;
         }
         case Node_TYPE::NAME:{
