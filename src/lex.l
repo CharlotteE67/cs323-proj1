@@ -28,6 +28,7 @@ num [0-9]
 num_16 [0-9a-fA-F]
 letter [a-zA-Z]
 letter_ [a-zA-Z_]
+multi_comment \/\*(?:\*(?!\/)|[^\*])*\*\/
 
 INT_10 ([1-9]{num}*)|0
 INT_16 0[xX](0|[1-9A-Fa-f]{num_16}*)
@@ -52,6 +53,7 @@ CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
 
 %%
 "//" { char c = yyinput();while(c!='\n'){c=yyinput();}}
+{multi_comment} {/*multi-line comment, do nothing */}
 "\n" {yycolumn = 1;}
 "int" { 
     yylval.value = new Node("INT",Node_TYPE::DTYPE);
