@@ -1,7 +1,7 @@
 %{
     #include "spl_node.h"
-    int isError = 0;
-    #define LEXER_ERROR_OUTPUT stdout
+    int has_err = 0;
+    #define LEX_ERR_OP stdout
 %}
 
 %{
@@ -83,14 +83,14 @@ ID {letter_}({letter_}|{num}){0,31}
 
 
 
-. { fprintf(stderr, "unknown symbol: %s\n", yytext); exit(1); }
+. { fprintf(LEX_ERR_OP, "unknown symbol: %s\n", yytext); exit(1); }
 %%
 
 int main(int argc,char **argv){
     //from lab2 sample
     char *file_path;
     if(argc < 2){
-        fprintf(stderr, "Usage: %s <file_path>\n", argv[0]);
+        fprintf(LEX_ERR_OP, "Usage: %s <file_path>\n", argv[0]);
         return EXIT_FAIL;
     } else if(argc == 2){
         file_path = argv[1];
@@ -101,7 +101,7 @@ int main(int argc,char **argv){
         yylex();
         return EXIT_OK;
     } else{
-        fputs("Too many arguments! Expected: 2.\n", stderr);
+        fputs("Too many arguments! Expected: 2.\n", LEX_ERR_OP);
         return EXIT_FAIL;
     }
 }

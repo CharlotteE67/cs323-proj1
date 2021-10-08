@@ -1,6 +1,7 @@
 %{
     #include "lex.yy.c"
     #include "yyerror_myself.hpp"
+    #define SYNTAX_ERR_OP stdout
     void yyerror(const char *s);
     void lineinfor(void);
     Node* root_node;
@@ -130,10 +131,10 @@ Args: Exp COMMA Args
 %%
 void yyerror(const char *s){
     has_err=1;
-    fprintf(stdout,"Error type B at Line %d: ",yylloc.first_line-1);
+    fprintf(SYNTAX_ERR_OP,"Error type B at Line %d: ",yylloc.first_line-1);
 }
 
 void lineinfor(void){
-    fprintf(stderr, "begin at:(%d,%d)\n",yylloc.first_line,yylloc.first_column);
-    fprintf(stderr, "end at:(%d,%d)\n",yylloc.last_line,yylloc.last_column);
+    fprintf(SYNTAX_ERR_OP, "begin at:(%d,%d)\n",yylloc.first_line,yylloc.first_column);
+    fprintf(SYNTAX_ERR_OP, "end at:(%d,%d)\n",yylloc.last_line,yylloc.last_column);
 }
