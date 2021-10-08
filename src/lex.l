@@ -36,18 +36,18 @@ CHAR '.'
 CHAR_16 '\\x(0|[1-9a-fA-F]{num_16})'
 ID {letter_}({letter_}|{num}){0,31}
 
-ID_ERR_TOOLONG
+ID_ERR_TOOLONG {letter_}({letter_}|{num}){32,}
 
-INT_10_ERR_0STA
+INT_10_ERR_0STA 0{num}+
 
-CHAR_ERR_TOOLONG
+CHAR_ERR_TOOLONG '.{2,}'
 
-INT_16_ERR_CHARILL 
-INT_16_ERR_MORE0
+INT_16_ERR_CHARILL 0[xX]([1-9a-fA-F]{num_16}*[g-z]{num_16}*)
+INT_16_ERR_MORE0 0[xX](0{2,}{num_16}*)
 
-CHAR_16_ERR_CHARILL
-CHAR_16_ERR_MORE0
-CHAR_16_ERR_TOOLONG
+CHAR_16_ERR_CHARILL '\\x([1-9a-fA-F]){num_16}*[g-z]{num_16}*'
+CHAR_16_ERR_MORE0 '\\x00{num_16}*'
+CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
 
 
 %%
