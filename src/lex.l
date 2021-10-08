@@ -1,6 +1,6 @@
 %{
     #include "spl_node.hpp"
-    bool has_err = 0;
+    bool has_err = false;
     #define LEX_ERR_OP stdout
     #define SYNTAX_ERR_OP stdout
 %}
@@ -57,15 +57,15 @@ CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
 
 "\n" {yycolumn = 1;}
 "int" { 
-    yylval.value = new Node("INT",Node_TYPE::DTYPE);
+    yylval.value = new Node("int",Node_TYPE::DTYPE);
     return TYPE; 
 }
 "float" { 
-    yylval.value = new Node("FLOAT",Node_TYPE::DTYPE);
+    yylval.value = new Node("float",Node_TYPE::DTYPE);
     return TYPE; 
 }
 "char" { 
-    yylval.value = new Node("CHAR",Node_TYPE::DTYPE);
+    yylval.value = new Node("char",Node_TYPE::DTYPE);
     return TYPE; 
 }
 "struct" { yylval.value = new Node("STRUCT");return STRUCT; }

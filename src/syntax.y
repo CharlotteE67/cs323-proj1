@@ -149,7 +149,7 @@ Args:
 ;
 %%
 void yyerror(const char *s){
-    has_err=1;
+    has_err = true;
     fprintf(SYNTAX_ERR_OP,"Error type B at Line %d: %s",yylloc.first_line-1, yytext);
 }
 

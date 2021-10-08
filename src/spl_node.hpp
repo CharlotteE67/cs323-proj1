@@ -30,10 +30,11 @@ private:
     };
     vector <Node*> child;
 
+
 public:
     Node();
 
-    void print(int space);
+    void print(int depth);
 
     Node(int val);
     Node(float val);
@@ -46,6 +47,7 @@ public:
 
     void set_child(vector<Node*>&);
 
+    void show(int depth);
 
 };
 
