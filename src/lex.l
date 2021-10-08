@@ -93,7 +93,7 @@ CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
 "]" { yylval.value = new Node("RB");return RB; }
 "{" { yylval.value = new Node("LC");return LC; }
 "}" { yylval.value = new Node("RC");return RC; }
-[ \n\r\t]+ {}
+[ \r\t]+ {}
 
 {ID} {
     yylval.value = new Node(yytext,Node_TYPE::ID);
@@ -121,9 +121,57 @@ CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
 } 
 
 
+{ID_ERR_TOOLONG} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: identifier too long\n",yylineno);
+    return ERR_TOKEN;
+}
+{INT_10_ERR_0STA} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: number start with 0\n",yylineno);
+    return ERR_TOKEN;
+}
+
+{CHAR_ERR_TOOLONG} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: too many chars\n",yylineno);
+    return ERR_TOKEN;
+}
+
+{INT_16_ERR_CHARILL} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: hexadecimal int with illegal char\n",yylineno);
+    return ERR_TOKEN;
+}
+{INT_16_ERR_MORE0} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: too many 0 at the beginning of hexadecimal representation \n",yylineno);
+    return ERR_TOKEN;
+}
+
+{CHAR_16_ERR_CHARILL} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: hexadecimal representation with illegal char\n",yylineno);
+    return ERR_TOKEN;
+}
+{CHAR_16_ERR_MORE0} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: too many 0 at the beginning of hexadecimal representation\n",yylineno);
+    return ERR_TOKEN;
+}
+{CHAR_16_ERR_TOOLONG} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: hexadecimal representation is too long\n",yylineno);
+    return ERR_TOKEN;
+}
 
 
-. { fprintf(LEX_ERR_OP, "unknown symbol: %s\n", yytext); exit(1); }
+
+.+ { 
+    has_err =1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: unknown lexeme %s\n",yylineno, yytext);
+    return ERR_TOKEN;
+}
 %%
 
 int main(int argc,char **argv){
