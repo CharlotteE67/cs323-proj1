@@ -37,6 +37,8 @@ CHAR_16 '\\x(0|[1-9a-fA-F]{num_16})'
 ID {letter_}({letter_}|{num}){0,31}
 
 
+
+
 %%
 "//" { char c = yyinput();while(c!='\n'){c=yyinput();}}
 "\n" {yycolumn = 1;}

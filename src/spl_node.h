@@ -41,6 +41,9 @@ public:
     
     Node(string name);
     Node(string name,Node_TYPE type);
+    Node(string name,int line_no);
+
+    void set_child(vector<Node*> sub);
 
 
 };
