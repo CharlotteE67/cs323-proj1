@@ -65,6 +65,13 @@ Node::Node(string name,int line_no){
     this->TYPE = Node_TYPE::LINE;
 }
 
-void Node::set_child(vector<Node*>& sub){
-    this->sub_nodes = sub;
+Node::Node(string name,int line_no, vector<Node*>& child){
+    this->name = name;
+    this->lineno = line_no;
+    this->TYPE = Node_TYPE::LINE;
+    this->child = child;
+}
+
+void Node::set_child(vector<Node*>& child){
+    this->child = child;
 }

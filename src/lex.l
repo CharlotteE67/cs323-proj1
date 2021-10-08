@@ -170,8 +170,8 @@ CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
 
 
 
-.+ { 
-    has_err =1;
+. {
+    has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: unknown lexeme %s\n",yylineno, yytext);
     return ERR_TOKEN;
 }

@@ -28,7 +28,7 @@ private:
         float float_value;
         char char_value;
     };
-    vector <Node*> sub_nodes;
+    vector <Node*> child;
 
 public:
     Node();
@@ -42,6 +42,7 @@ public:
     Node(string name);
     Node(string name,Node_TYPE type);
     Node(string name,int line_no);
+    Node(string name,int line_no, vector<Node*>& child);
 
     void set_child(vector<Node*>&);
 

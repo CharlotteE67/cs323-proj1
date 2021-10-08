@@ -11,9 +11,9 @@ CXX_FLAGS = -O3 $(CXX_DEBUG) $(CXX_STD) $(CXX_WARN)
 CPP = $(GPP) $(CXX_FLAGS)
 
 .PHONY: clean
-.lex:lex.l
+.lex: lex.l
 	$(FLEX) lex.l
-.syntax:syntax.y
+.syntax: syntax.y
 	$(BISON) -t -d -v syntax.y
 .spl_node: .lex .syntax
 	$(CPP) -c spl_node.cpp -o spl_node.o
