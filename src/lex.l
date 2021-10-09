@@ -186,13 +186,13 @@ ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
 {ID_ERR_NUMSTA} {
     has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: identifier starts with number \n",yylineno);
-    return ERR_TOKEN;
+    return ID;
 }
 
 {ID_ERR_TOOLONG} {
     has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: identifier too long\n",yylineno);
-    return ERR_TOKEN;
+    return ID;
 }
 
 . {

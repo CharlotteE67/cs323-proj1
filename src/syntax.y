@@ -133,6 +133,7 @@ Def:
     Specifier DecList SEMI { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Def", @$.first_line, vec); }
     | Specifier DecList error {puts(ERR_NO_SEMI.c_str());}
     | error DecList SEMI {puts(ERR_NO_SPEC.c_str());}
+    | Specifier error {puts("No Declare List");}
 ;
 DecList:
     Dec { vector<Node*> vec = {$1}; $$ = new Node("DecList", @$.first_line, vec); }
