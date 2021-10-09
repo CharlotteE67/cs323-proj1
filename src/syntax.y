@@ -25,10 +25,10 @@
 }
 
 %nonassoc LACK_ERR
+%nonassoc <value> ERR_TOKEN
 %nonassoc <value> NELSE
 %nonassoc <value> ELSE
 %token <value> TYPE STRUCT
-%token <value> ERR_TOKEN
 %token <value> IF WHILE RETURN
 %token <value> INT FLOAT CHAR
 %token <value> ID
@@ -160,20 +160,20 @@ Exp:
     | Exp MUL Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
     | Exp DIV Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
     | LP Exp RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
-    | LP Exp error {puts(ERR_NO_RP.c_str());}
     | MINUS Exp %prec UMINUS { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec); }
     | NOT Exp { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec); }
     | ID LP Args RP { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec); }
-    | ID LP Args error {puts(ERR_NO_RP.c_str());}
     | ID LP RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
-    | ID LP error {puts(ERR_NO_RP.c_str());}
     | Exp LB Exp RB { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec); }
-    | Exp LB Exp error {puts(ERR_NO_RB.c_str());}
     | Exp DOT ID { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
     | ID { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
     | INT { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
     | FLOAT { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
+    | LP Exp error {puts(ERR_NO_RP.c_str());}
+    | ID LP Args error {puts(ERR_NO_RP.c_str());}
+    | ID LP error {puts(ERR_NO_RP.c_str());}
     | CHAR { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
+    | Exp LB Exp error {puts(ERR_NO_RB.c_str());}
     | Exp ERR_TOKEN Exp {}
     | ERR_TOKEN {}
 ;
