@@ -35,27 +35,26 @@ INT_10 0|([1-3]{num}{0,9})|([4-9]{num}{0,8})|(4[01]{num}{8})|(42[0-8]{num}{7})|(
 INT_16 0[xX](0|[1-9A-Fa-f]{num_16}{0,7})
 FLOAT {num}+\.{num}+
 CHAR '.'
-CHAR_16 '\\x(0|[1-9a-fA-F]{num_16})'
+CHAR_16 '\\x(0|[1-9a-fA-F]{num_16}?)'
 ID {letter_}({letter_}|{num}){0,31}
 
-ID_ERR_TOOLONG {letter_}({letter_}|{num}){32,}
-ID_ERR_NUMSTA {num}({letter_}|{num}){0,31}
 
 INT_10_ERR_OUTRANGE [1-9]{num}+
 INT_10_ERR_0STA 0{num}+
-INT_10_ERR_CHARILL {num}*([^0-9]+{num}*)*
 
 CHAR_ERR_TOOLONG '.{2,}'
 
-INT_16_ERR_CHARILL 0[xX](({num_16}*[^0-9a-fA-F]+)+{num_16}*)
+INT_16_ERR_CHARILL 0[xX](({num_16}*[g-zG-Z]+)+{num_16}*)
 INT_16_ERR_MORE0 0[xX](0+{num_16}+)
-INT_16_ERR_TOOLONG 0[xX](.{9,})
+INT_16_ERR_TOOLONG 0[xX]([1-9A-Fa-f]{num_16}{8,})
 
 CHAR_16_ERR_TOOLONG '\\x.{3,}'
-CHAR_16_ERR_CHARILL '\\x{num_16}*[^0-9a-fA-F]+{num_16}*'
+CHAR_16_ERR_CHARILL '\\x{num_16}*[G-Zg-z]+{num_16}*'
 CHAR_16_ERR_MORE0 '\\x0+{num_16}'
 
 
+ID_ERR_TOOLONG {letter_}({letter_}|{num}){32,}
+ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
 
 %%
 "//" { char c = yyinput();while(c!='\n'){c=yyinput();}}
@@ -128,18 +127,6 @@ CHAR_16_ERR_MORE0 '\\x0+{num_16}'
     return CHAR;
 } 
 
-{ID_ERR_NUMSTA} {
-    has_error = 1;
-    fprintf(LEX_ERR_OP,"Error type A at Line %d: identifier starts with number \n",yylineno);
-    return ERR_TOKEN;
-}
-
-{ID_ERR_TOOLONG} {
-    has_err = 1;
-    fprintf(LEX_ERR_OP,"Error type A at Line %d: identifier too long\n",yylineno);
-    return ERR_TOKEN;
-}
-
 
 {INT_10_ERR_0STA} {
     has_err = 1;
@@ -152,11 +139,7 @@ CHAR_16_ERR_MORE0 '\\x0+{num_16}'
     return ERR_TOKEN;
 
 }
-{INT_10_ERR_CHARILL} {
-    has_err = 1;
-    fprintf(LEX_ERR_OP,"Error type A at Line %d: int number with illegal char \n",yylineno);
-    return ERR_TOKEN;
-}
+
 
 
 {CHAR_ERR_TOOLONG} {
@@ -183,7 +166,7 @@ CHAR_16_ERR_MORE0 '\\x0+{num_16}'
 }
 
 
-{CHAR_16_ERROR_TOOLONG} {
+{CHAR_16_ERR_TOOLONG} {
     has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: hexadecimal representation too long \n",yylineno);
     return ERR_TOKEN;
@@ -200,7 +183,17 @@ CHAR_16_ERR_MORE0 '\\x0+{num_16}'
 }
 
 
+{ID_ERR_NUMSTA} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: identifier starts with number \n",yylineno);
+    return ERR_TOKEN;
+}
 
+{ID_ERR_TOOLONG} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: identifier too long\n",yylineno);
+    return ERR_TOKEN;
+}
 
 . {
     has_err = 1;
