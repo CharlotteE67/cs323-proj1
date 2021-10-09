@@ -31,25 +31,30 @@ num_16 [0-9a-fA-F]
 letter [a-zA-Z]
 letter_ [a-zA-Z_]
 
-INT_10 ([1-9]{num}*)|0
-INT_16 0[xX](0|[1-9A-Fa-f]{num_16}*)
+INT_10 0|([1-3]{num}{0,9})|([4-9]{num}{0,8})|(4[01]{num}{8})|(42[0-8]{num}{7})|(429[0-3]{num}{6})|(4294[0-8]{num}{5})|(42949[0-5]{num}{4})|(429496[0-6]{num}{3})|(4294967[01]{num}{2})|(42949672[0-8]{num})|(429496729[0-5])
+INT_16 0[xX](0|[1-9A-Fa-f]{num_16}{0,7})
 FLOAT {num}+\.{num}+
 CHAR '.'
 CHAR_16 '\\x(0|[1-9a-fA-F]{num_16})'
 ID {letter_}({letter_}|{num}){0,31}
 
 ID_ERR_TOOLONG {letter_}({letter_}|{num}){32,}
+ID_ERR_NUMSTA {num}({letter_}|{num}){0,31}
 
+INT_10_ERR_OUTRANGE [1-9]{num}+
 INT_10_ERR_0STA 0{num}+
+INT_10_ERR_CHARILL {num}*([^0-9]+{num}*)*
 
 CHAR_ERR_TOOLONG '.{2,}'
 
-INT_16_ERR_CHARILL 0[xX]([1-9a-fA-F]{num_16}*[g-z]{num_16}*)
-INT_16_ERR_MORE0 0[xX](0{2,}{num_16}*)
+INT_16_ERR_CHARILL 0[xX](({num_16}*[^0-9a-fA-F]+)+{num_16}*)
+INT_16_ERR_MORE0 0[xX](0+{num_16}+)
+INT_16_ERR_TOOLONG 0[xX](.{9,})
 
-CHAR_16_ERR_CHARILL '\\x([1-9a-fA-F]){num_16}*[g-z]{num_16}*'
-CHAR_16_ERR_MORE0 '\\x00{num_16}*'
-CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
+CHAR_16_ERR_TOOLONG '\\x.{3,}'
+CHAR_16_ERR_CHARILL '\\x{num_16}*[^0-9a-fA-F]+{num_16}*'
+CHAR_16_ERR_MORE0 '\\x0+{num_16}'
+
 
 
 %%
@@ -123,17 +128,36 @@ CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
     return CHAR;
 } 
 
+{ID_ERR_NUMSTA} {
+    has_error = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: identifier starts with number \n",yylineno);
+    return ERR_TOKEN;
+}
 
 {ID_ERR_TOOLONG} {
     has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: identifier too long\n",yylineno);
     return ERR_TOKEN;
 }
+
+
 {INT_10_ERR_0STA} {
     has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: number start with 0\n",yylineno);
     return ERR_TOKEN;
 }
+{INT_10_ERR_OUTRANGE} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: int number overflow \n",yylineno);
+    return ERR_TOKEN;
+
+}
+{INT_10_ERR_CHARILL} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: int number with illegal char \n",yylineno);
+    return ERR_TOKEN;
+}
+
 
 {CHAR_ERR_TOOLONG} {
     has_err = 1;
@@ -141,6 +165,12 @@ CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
     return ERR_TOKEN;
 }
 
+
+{INT_16_ERR_TOOLONG} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: int number overflow \n",yylineno);
+    return ERR_TOKEN;
+}
 {INT_16_ERR_CHARILL} {
     has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: hexadecimal int with illegal char\n",yylineno);
@@ -152,6 +182,12 @@ CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
     return ERR_TOKEN;
 }
 
+
+{CHAR_16_ERROR_TOOLONG} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: hexadecimal representation too long \n",yylineno);
+    return ERR_TOKEN;
+}
 {CHAR_16_ERR_CHARILL} {
     has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: hexadecimal representation with illegal char\n",yylineno);
@@ -162,11 +198,7 @@ CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}'
     fprintf(LEX_ERR_OP,"Error type A at Line %d: too many 0 at the beginning of hexadecimal representation\n",yylineno);
     return ERR_TOKEN;
 }
-{CHAR_16_ERR_TOOLONG} {
-    has_err = 1;
-    fprintf(LEX_ERR_OP,"Error type A at Line %d: hexadecimal representation is too long\n",yylineno);
-    return ERR_TOKEN;
-}
+
 
 
 
