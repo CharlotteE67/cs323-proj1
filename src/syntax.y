@@ -5,6 +5,18 @@
     void lineinfor(void);
     Node* root;
     extern bool has_err;
+    
+    
+    const string
+            ERR_NO_LP = "Missing left parenthesis \'(\'" ,
+            ERR_NO_RP = "Missing right parenthesis \')\'" ,
+            ERR_NO_LB = "Missing left bracket \'[\'" ,
+            ERR_NO_RB = "Missing right bracket \']\'" ,
+            ERR_NO_LC = "Missing left curly braces \'{\'" ,
+            ERR_NO_RC = "Missing right curly braces \'}\'" ,
+            ERR_NO_SPEC = "Missing specifier" ,
+            ERR_NO_SEMI = "Missing semicolon \';\'" ,
+            ERR_NO_COMMA = "Missing comma \',\'" ;
 %}
 
 %locations
@@ -12,11 +24,11 @@
     Node* value;
 }
 
-
+%nonassoc LACK_ERR
+%nonassoc <value> ERR_TOKEN
 %nonassoc <value> NELSE
 %nonassoc <value> ELSE
 %token <value> TYPE STRUCT
-%token <value> ERR_TOKEN
 %token <value> IF WHILE RETURN
 %token <value> INT FLOAT CHAR
 %token <value> ID
@@ -50,10 +62,13 @@ ExtDef:
     Specifier ExtDecList SEMI { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("ExtDef", @$.first_line, vec); }
     | Specifier SEMI { vector<Node*> vec = {$1, $2}; $$ = new Node("ExtDef", @$.first_line, vec); $$->set_child(vec);}
     | Specifier FunDec CompSt { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("ExtDef", @$.first_line, vec); }
+    | Specifier ExtDecList error  {puts(ERR_NO_SEMI.c_str());}
+    | Specifier error {puts(ERR_NO_SEMI.c_str());}
     ;
 ExtDecList:
     VarDec { vector<Node*> vec = {$1}; $$ = new Node("ExtDecList", @$.first_line, vec); }
     | VarDec COMMA ExtDecList { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("ExtDecList", @$.first_line, vec); }
+    | VarDec ExtDecList error {puts(ERR_NO_COMMA.c_str());}
 ;
 
 /* specifier */
@@ -64,19 +79,24 @@ Specifier:
 StructSpecifier:
     STRUCT ID LC DefList RC { vector<Node*> vec = {$1, $2, $3, $4, $5}; $$ = new Node("StructSpecifier", @$.first_line, vec); }
     | STRUCT ID { vector<Node*> vec = {$1, $2}; $$ = new Node("StructSpecifier", @$.first_line, vec); }
+    | STRUCT ID LC DefList error { puts(ERR_NO_RC.c_str()); }
 ;
 
 /* declarator */
 VarDec:
     ID { vector<Node*> vec = {$1}; $$ = new Node("VarDec", @$.first_line, vec); }
     | VarDec LB INT RB { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("VarDec", @$.first_line, vec); }
+    | VarDec LB INT error %prec LACK_ERR {puts(ERR_NO_RB.c_str());}
 ;
 FunDec:
     ID LP VarList RP { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("FunDec", @$.first_line, vec); }
     | ID LP RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("FunDec", @$.first_line, vec); }
+    | ID LP VarList error {puts(ERR_NO_RP.c_str());}
+    | ID LP error {puts(ERR_NO_RP.c_str());}
 ;
 VarList:
     ParamDec COMMA VarList { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("VarList", @$.first_line, vec); }
+    | ParamDec VarList error {puts(ERR_NO_COMMA.c_str());}
     | ParamDec { vector<Node*> vec = {$1}; $$ = new Node("VarList", @$.first_line, vec); }
 ;
 ParamDec:
@@ -97,6 +117,11 @@ Stmt:
     | IF LP Exp RP Stmt %prec NELSE { vector<Node*> vec = {$1, $2, $3, $4, $5}; $$ = new Node("Stmt", @$.first_line, vec); }
     | IF LP Exp RP Stmt ELSE Stmt { vector<Node*> vec = {$1, $2, $3, $4, $5, $6, $7}; $$ = new Node("Stmt", @$.first_line, vec); }
     | WHILE LP Exp RP Stmt { vector<Node*> vec = {$1, $2, $3, $4, $5}; $$ = new Node("Stmt", @$.first_line, vec); }
+    | WHILE LP Exp error Stmt {puts(ERR_NO_RP.c_str()); }
+    | Exp error {puts(ERR_NO_SEMI.c_str());}
+    | RETURN Exp error {puts(ERR_NO_SEMI.c_str());}
+    | IF LP Exp error Stmt  {puts(ERR_NO_RP.c_str()); }
+    | IF error Exp RP Stmt {puts(ERR_NO_LP.c_str()); }
 ;
 
 /* local definition */
@@ -106,10 +131,13 @@ DefList:
 ;
 Def:
     Specifier DecList SEMI { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Def", @$.first_line, vec); }
+    | Specifier DecList error {puts(ERR_NO_SEMI.c_str());}
+    | error DecList SEMI {puts(ERR_NO_SPEC.c_str());}
 ;
 DecList:
     Dec { vector<Node*> vec = {$1}; $$ = new Node("DecList", @$.first_line, vec); }
     | Dec COMMA DecList { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("DecList", @$.first_line, vec); }
+    | Dec DecList error {puts(ERR_NO_COMMA.c_str());}
 ;
 Dec:
     VarDec { vector<Node*> vec = {$1}; $$ = new Node("Dec", @$.first_line, vec); }
@@ -141,7 +169,13 @@ Exp:
     | ID { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
     | INT { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
     | FLOAT { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
+    | LP Exp error {puts(ERR_NO_RP.c_str());}
+    | ID LP Args error {puts(ERR_NO_RP.c_str());}
+    | ID LP error {puts(ERR_NO_RP.c_str());}
     | CHAR { vector<Node*> vec = {$1}; $$ = new Node("Exp", @$.first_line, vec); }
+    | Exp LB Exp error {puts(ERR_NO_RB.c_str());}
+    | Exp ERR_TOKEN Exp {}
+    | ERR_TOKEN {}
 ;
 Args:
     Exp COMMA Args { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Args", @$.first_line, vec); }
@@ -150,7 +184,7 @@ Args:
 %%
 void yyerror(const char *s){
     has_err = true;
-    fprintf(SYNTAX_ERR_OP,"Error type B at Line %d: %s",yylloc.first_line-1, yytext);
+    fprintf(SYNTAX_ERR_OP,"Error type B at Line %d: ",yylloc.first_line-1);
 }
 
 void lineinfor(void){
