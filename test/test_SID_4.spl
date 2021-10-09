@@ -1,0 +1,9 @@
+int main(){
+    int i = 10;
+    while (i > 0) {
+        i = i / 2;
+    }
+    int b = i - 1;
+    int c = b || 4;
+    bool d = 0;
+    return 0;

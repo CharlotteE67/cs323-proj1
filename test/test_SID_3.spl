@@ -1,0 +1,6 @@
+int main(){
+    bool i = 0;
+    i = 1;
+    char cs = '3';
+    int cs323 = 323sc;
+}
