@@ -1,12 +1,16 @@
-
 int func_1(){
-  
   return (a||b);
 }
 float 1_invalid_func(){
   return a;
 }
 int test(int n) {
-  int invalid_int = sfe234;
+  int a = _test234;
   int test_func = func_1();
+
+  char invalid_char_1 = '\xu4';
+  char invalid_char_2 = '\x1234d';
+
+  float invalid_float_1 = .00234;
+  float invalid_float = 00.4268;
 }

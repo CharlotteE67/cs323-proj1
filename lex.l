@@ -33,7 +33,7 @@ letter_ [a-zA-Z_]
 
 INT_10 0|([1-3]{num}{0,9})|([4-9]{num}{0,8})|(4[01]{num}{8})|(42[0-8]{num}{7})|(429[0-3]{num}{6})|(4294[0-8]{num}{5})|(42949[0-5]{num}{4})|(429496[0-6]{num}{3})|(4294967[01]{num}{2})|(42949672[0-8]{num})|(429496729[0-5])
 INT_16 0[xX](0|[1-9A-Fa-f]{num_16}{0,7})
-FLOAT {num}+\.{num}+
+FLOAT (0|([1-9]{num}*))\.{num}+
 CHAR '.'
 CHAR_16 '\\x(0|[1-9a-fA-F]{num_16}?)'
 ID {letter_}({letter_}|{num}){0,31}
@@ -41,11 +41,12 @@ ID {letter_}({letter_}|{num}){0,31}
 INT_10_ERR_OUTRANGE [1-9]{num}+
 INT_10_ERR_0STA 0{num}+
 
-
-
 INT_16_ERR_CHARILL 0[xX](({num_16}*[g-zG-Z]+)+{num_16}*)
 INT_16_ERR_MORE0 0[xX](0+{num_16}+)
 INT_16_ERR_TOOLONG 0[xX]([1-9A-Fa-f]{num_16}{8,})
+
+FLOAT_ERR_MISSINGD (\.{num}+)|({num}+\.)
+FLOAT_ERR_MORE0     0{num}+\.{num}+
 
 CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}?'
 CHAR_16_ERR_CHARILL '\\x{num_16}*[G-Zg-z]+{num_16}*'
@@ -159,6 +160,16 @@ ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
     return ERR_TOKEN;
 }
 
+{FLOAT_ERR_MISSINGD} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: float number missing digits\n",yylineno);
+    return ERR_TOKEN;
+}
+{FLOAT_ERR_MORE0} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: float number start with 0\n",yylineno);
+    return ERR_TOKEN;
+}
 
 {CHAR_16_ERR_TOOLONG} {
     has_err = 1;

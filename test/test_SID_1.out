@@ -1,1 +1,6 @@
-Error type A at Line 3: (msg)
+Error type A at Line 5: too many chars
+Error type A at Line 14: number starts with 0
+Error type A at Line 15: int number overflow
+Error type A at Line 17: hexadecimal number starts with redundant 0
+Error type A at Line 18: hexadecimal number with illegal char
+Error type A at Line 19: int number overflow

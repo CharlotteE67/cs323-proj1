@@ -1,0 +1,5 @@
+Error type A at Line 4: identifier starts with number 
+Error type A at Line 11: hexadecimal representation with illegal char
+Error type A at Line 12: hexadecimal representation too long 
+Error type A at Line 14: float number missing digits
+Error type A at Line 15: float number starts with 0
