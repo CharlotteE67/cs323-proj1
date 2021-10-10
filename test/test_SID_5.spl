@@ -1,0 +1,9 @@
+int test_func_1({
+    int temp;
+    temp = '2';
+}
+
+
+int main(){
+
+}

@@ -38,20 +38,20 @@ CHAR '.'
 CHAR_16 '\\x(0|[1-9a-fA-F]{num_16}?)'
 ID {letter_}({letter_}|{num}){0,31}
 
-
 INT_10_ERR_OUTRANGE [1-9]{num}+
 INT_10_ERR_0STA 0{num}+
 
-CHAR_ERR_TOOLONG '.{2,}'
+
 
 INT_16_ERR_CHARILL 0[xX](({num_16}*[g-zG-Z]+)+{num_16}*)
 INT_16_ERR_MORE0 0[xX](0+{num_16}+)
 INT_16_ERR_TOOLONG 0[xX]([1-9A-Fa-f]{num_16}{8,})
 
-CHAR_16_ERR_TOOLONG '\\x.{3,}'
+CHAR_16_ERR_TOOLONG '\\x{num_16}{3,}?'
 CHAR_16_ERR_CHARILL '\\x{num_16}*[G-Zg-z]+{num_16}*'
 CHAR_16_ERR_MORE0 '\\x0+{num_16}'
 
+CHAR_ERR_TOOLONG '[^']{2,}?'
 
 ID_ERR_TOOLONG {letter_}({letter_}|{num}){32,}
 ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
@@ -102,6 +102,7 @@ ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
 "}" { yylval.value = new Node("RC");return RC; }
 [ \r\t]+ {}
 
+
 {ID} {
     yylval.value = new Node(yytext,Node_TYPE::ID);
     return ID;
@@ -142,9 +143,6 @@ ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
 
 
 
-
-
-
 {INT_16_ERR_TOOLONG} {
     has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: int number overflow \n",yylineno);
@@ -178,11 +176,15 @@ ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
     return ERR_TOKEN;
 }
 
+
+
+
 {CHAR_ERR_TOOLONG} {
     has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: too many chars\n",yylineno);
     return ERR_TOKEN;
 }
+
 
 
 {ID_ERR_NUMSTA} {
