@@ -16,7 +16,8 @@
             ERR_NO_RC = "Missing right curly braces \'}\'" ,
             ERR_NO_SPEC = "Missing specifier" ,
             ERR_NO_SEMI = "Missing semicolon \';\'" ,
-            ERR_NO_COMMA = "Missing comma \',\'" ;
+            ERR_NO_COMMA = "Missing comma \',\'" ,
+            ERR_MORE_COMMA = "Unexpected comma \',\'" ;
 %}
 
 %locations
@@ -181,6 +182,7 @@ Exp:
 Args:
     Exp COMMA Args { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Args", @$.first_line, vec); }
     | Exp { vector<Node*> vec = {$1}; $$ = new Node("Args", @$.first_line, vec); }
+    | Exp COMMA error { puts(ERR_MORE_COMMA.c_str()); }
 ;
 %%
 void yyerror(const char *s){
