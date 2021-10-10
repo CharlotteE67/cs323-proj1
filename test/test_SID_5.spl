@@ -3,7 +3,9 @@ int test_func_1({
     temp = '2';
 }
 
-
 int main(){
+    int a = 0xe8g;
+    
+
 
 }

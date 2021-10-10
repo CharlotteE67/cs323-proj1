@@ -1,6 +1,29 @@
+struct test{
+    int a;
+    char b;
+};
+int test_func(char c){
+    float a,b;
+    while(a==b){
+        if(c>=2){
+            a = 5;
+        }else{
+            b = 6;
+        }
+    }
+    return a==b;
+}
 int main(){
-    bool i = 0;
-    i = 1;
-    char cs = '3';
-    int cs323 = 323sc;
+
+    struct test my_test;
+    int d,final;
+    if(d!=0){
+        if(a&&b){
+            final = test_func(my_test.a);
+        }
+        
+    }else{
+        final = test_func(0);
+    }
+
 }
