@@ -1,6 +1,8 @@
 #include "syntax.tab.c"
 #include <stdio.h>
 
+#define DEBUG true
+
 int main(int argc,char **argv){
     //from lab2 sample
     if(argc <= 1){
@@ -18,7 +20,7 @@ int main(int argc,char **argv){
         fprintf(LEX_ERR_OP, "Too many arguments! Expected: 2. Received %d\n", argc);
         return EXIT_FAIL;
     }
-    if (!has_err) {
+    if (!has_err || DEBUG) {
         root->show(0);
     }
     return EXIT_OK;

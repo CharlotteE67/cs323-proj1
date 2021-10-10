@@ -94,12 +94,12 @@ FunDec:
     | ID LP RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("FunDec", @$.first_line, vec); }
     | ID LP VarList error {puts(ERR_NO_RP.c_str());}
     | ID LP error {puts(ERR_NO_RP.c_str());}
-    | ID LP VarList COMMA RP error { puts(ERR_MORE_COMMA.c_str()); }
 ;
 VarList:
     ParamDec COMMA VarList { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("VarList", @$.first_line, vec); }
     | ParamDec { vector<Node*> vec = {$1}; $$ = new Node("VarList", @$.first_line, vec); }
     | ParamDec VarList error {puts(ERR_NO_COMMA.c_str());}
+    | ParamDec COMMA error { puts(ERR_MORE_COMMA.c_str()); }
 ;
 ParamDec:
     Specifier VarDec { vector<Node*> vec = {$1, $2}; $$ = new Node("ParamDec", @$.first_line, vec); }
@@ -107,6 +107,7 @@ ParamDec:
 /* statement */
 CompSt:
     LC DefList StmtList RC { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("CompSt", @$.first_line, vec); }
+    | LC DefList StmtList error { puts(ERR_NO_RC.c_str()); }
 ;
 StmtList:
     /* NULL */ { $$ = new Node("StmtList", @$.first_line);}

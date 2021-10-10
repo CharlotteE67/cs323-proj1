@@ -1,18 +1,8 @@
-struct test{
 
-};
-
-int test_func_1(int a, ){
-    return a!=0;
-}
-
-int test_func_2(int a, int b){
-
-}
-
-int main(){
+int main() {
+    while (i > 0) 'a';
     int i = 10;
-    int b = i - 1;
-    int c = b || 4;
+    while (i > 0) 'a';
+    int i = 10;
     return 0;
 }
