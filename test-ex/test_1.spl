@@ -3,8 +3,8 @@ int test_1()
   int a = 0;
   // test single-line comment
   /*
-  * test multi-line comment
-  * sdadasdasdas
-  * cS3To3
+  test multi-line comment
+  sdadasdasdas
+  cS3To3
   */
 }

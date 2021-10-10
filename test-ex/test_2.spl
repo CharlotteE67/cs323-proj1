@@ -1,0 +1,10 @@
+int test_2()
+{
+  int a = 0;
+  /*
+  test multi-line comment nest
+  /*  /* sdadas */ s ad a */
+  sdadasdasdas
+  cS3To3
+  */
+}

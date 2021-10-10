@@ -57,10 +57,12 @@ CHAR_ERR_TOOLONG '[^']{2,}?'
 ID_ERR_TOOLONG {letter_}({letter_}|{num}){32,}
 ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
 
+MULTI_COMMENT_ERR \/\*(.|\n)*((\/\*|\*\/)){1,}(.|\n)*\*\/
+
 %%
 "//" { char c = yyinput();while(c!='\n'){c=yyinput();}}
 
-"\/\*(?:[^\*]|\*+[^\/\*])*\*+\/" { }
+"\/\*(.|\n)*\*\/" { }
 
 "\n" {yycolumn = 1;}
 "int" { 
@@ -210,6 +212,11 @@ ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
     has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: identifier too long\n",yylineno);
     return ID;
+}
+
+{MULTI_COMMENT_ERR} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: Multiple comment can't nest\n",yylineno);
 }
 
 . {
