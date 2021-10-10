@@ -60,6 +60,8 @@ ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
 %%
 "//" { char c = yyinput();while(c!='\n'){c=yyinput();}}
 
+"\/\*(?:[^\*]|\*+[^\/\*])*\*+\/" { }
+
 "\n" {yycolumn = 1;}
 "int" { 
     yylval.value = new Node("int",Node_TYPE::DTYPE);
