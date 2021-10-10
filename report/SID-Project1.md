@@ -101,5 +101,9 @@ public:
 
 ## IV. Instructions
 
-​			Using `make splc` to create `splc` in `./bin` root for spl codes' parsing. 
+​			Change directory to `/src` root and using `make splc` to create `splc` in `/bin` root for spl codes' parsing. 
+
+​			Back to main root and using `./bin/splc ./test/<file_name>` to create output parsing tree.
+
+​			
 
