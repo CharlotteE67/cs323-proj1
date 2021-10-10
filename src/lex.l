@@ -142,11 +142,7 @@ ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
 
 
 
-{CHAR_ERR_TOOLONG} {
-    has_err = 1;
-    fprintf(LEX_ERR_OP,"Error type A at Line %d: too many chars\n",yylineno);
-    return ERR_TOKEN;
-}
+
 
 
 {INT_16_ERR_TOOLONG} {
@@ -179,6 +175,12 @@ ID_ERR_NUMSTA [0-9]({letter_}|{num}){1,31}
 {CHAR_16_ERR_MORE0} {
     has_err = 1;
     fprintf(LEX_ERR_OP,"Error type A at Line %d: too many 0 at the beginning of hexadecimal representation\n",yylineno);
+    return ERR_TOKEN;
+}
+
+{CHAR_ERR_TOOLONG} {
+    has_err = 1;
+    fprintf(LEX_ERR_OP,"Error type A at Line %d: too many chars\n",yylineno);
     return ERR_TOKEN;
 }
 
