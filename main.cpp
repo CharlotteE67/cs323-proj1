@@ -1,7 +1,7 @@
 #include "syntax.tab.c"
 #include <stdio.h>
 
-#define DEBUG true
+#define DEBUG false
 
 int main(int argc,char **argv){
     //from lab2 sample

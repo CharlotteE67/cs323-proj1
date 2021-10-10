@@ -3,19 +3,20 @@ struct test{
     int valid_int,valid_hexint;
     char valid_hexchar = '\x0',valid_char = '?';
     char invalid_char = 'izfr';
-    
+
 };
 int main(){
-    struct test test_struct;
-
-    test_struct.valid_int = 24235;
-    test_struct.valid_hexint = 0xabcdef;
-
     int invalid_int_1 = 0295;
     int invalid_int_2 = 5920483965;
 
     int invalid_hexint_1 = 0x00242;
     int invalid_hexint_2 = 0xadg1u3;
     int invalid_hexint_3 = 0x123456789a;
+
+    struct test test_struct;
+
+    test_struct.valid_int = 24235;
+    test_struct.valid_hexint = 0xabcdef;
+
 
 }
