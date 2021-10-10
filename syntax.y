@@ -185,7 +185,7 @@ Args:
     Exp COMMA Args { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Args", @$.first_line, vec); }
     | Exp { vector<Node*> vec = {$1}; $$ = new Node("Args", @$.first_line, vec); }
     | Exp COMMA error { puts(ERR_MORE_COMMA.c_str()); }
-    | Exp Args error { puts(ERR_NO_COMMA.c_str()); }
+/*    | Exp Args error { puts(ERR_NO_COMMA.c_str()); } */
 ;
 %%
 void yyerror(const char *s){
