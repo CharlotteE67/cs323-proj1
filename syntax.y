@@ -30,7 +30,7 @@
 %nonassoc <value> NELSE
 %nonassoc <value> ELSE
 %token <value> TYPE STRUCT
-%token <value> IF WHILE RETURN
+%token <value> IF WHILE RETURN FOR
 %token <value> INT FLOAT CHAR
 %token <value> ID
 %right <value> ASSIGN
@@ -121,6 +121,7 @@ Stmt:
     | IF LP Exp RP Stmt ELSE Stmt { vector<Node*> vec = {$1, $2, $3, $4, $5, $6, $7}; $$ = new Node("Stmt", @$.first_line, vec); }
     | WHILE LP Exp RP Stmt { vector<Node*> vec = {$1, $2, $3, $4, $5}; $$ = new Node("Stmt", @$.first_line, vec); }
     | WHILE LP Exp error Stmt {puts(ERR_NO_RP.c_str()); }
+    | FOR LP Def Exp SEMI Exp RP Stmt  { vector<Node*> vec = {$1, $2, $3, $4, $5, $6, $7,$8}; $$ = new Node("Stmt", @$.first_line, vec); }
     | Exp error {puts(ERR_NO_SEMI.c_str());}
     | RETURN Exp error {puts(ERR_NO_SEMI.c_str());}
     | IF LP Exp error Stmt  {puts(ERR_NO_RP.c_str()); }

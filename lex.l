@@ -81,6 +81,7 @@ MULTI_COMMENT_ERR \/\*(.|\n)*((\/\*|\*\/)){1,}(.|\n)*\*\/
 "else" { yylval.value = new Node("ELSE");return ELSE; }
 "while" { yylval.value = new Node("WHILE");return WHILE; }
 "return" { yylval.value = new Node("RETURN");return RETURN; }
+"for" { yylval.value = new Node("FOR");return FOR; }
 "." { yylval.value = new Node("DOT");return DOT; }
 ";" { yylval.value = new Node("SEMI");return SEMI; }
 "," { yylval.value = new Node("COMMA");return COMMA; }
