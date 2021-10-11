@@ -164,7 +164,6 @@ Exp:
     | Exp MUL Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
     | Exp DIV Exp { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
     | LP Exp RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
-    | MINUS Exp %prec UMINUS { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec); }
     | NOT Exp { vector<Node*> vec = {$1, $2}; $$ = new Node("Exp", @$.first_line, vec); }
     | ID LP Args RP { vector<Node*> vec = {$1, $2, $3, $4}; $$ = new Node("Exp", @$.first_line, vec); }
     | ID LP RP { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Exp", @$.first_line, vec); }
@@ -185,7 +184,7 @@ Args:
     Exp COMMA Args { vector<Node*> vec = {$1, $2, $3}; $$ = new Node("Args", @$.first_line, vec); }
     | Exp { vector<Node*> vec = {$1}; $$ = new Node("Args", @$.first_line, vec); }
     | Exp COMMA error { puts(ERR_MORE_COMMA.c_str()); }
-/*    | Exp Args error { puts(ERR_NO_COMMA.c_str()); } */
+    | Exp Args error { puts(ERR_NO_COMMA.c_str()); }
 ;
 %%
 void yyerror(const char *s){
