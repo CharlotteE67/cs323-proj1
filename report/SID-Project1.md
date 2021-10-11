@@ -16,7 +16,7 @@
 
 ### 	A. Lexer
 
-​			In lexer part, we define a new class named `spl_node` which record the information of matched token for syntax analysis and final output.
+​			In lexer part, we define a new class named `Node` which record the information of matched token for syntax analysis and final output.
 
 ```C++
 enum class Node_TYPE{
@@ -65,11 +65,11 @@ public:
 };
 ```
 
-​				We define the variable `has_err`  to record whether there exists possible lexical and syntax error for final output. We also support single line comment symbol `//` besides given matching rules. We declare the illegal and error situations in detail so that we can handle all possible errors. All lexical error will be reported here with line number.
+​				We define the variable `has_err`  to record whether there exists possible lexical and syntax error for final output. We declare the illegal and error situations in detail so that we can handle all possible errors. All lexical error will be reported here with line number.
 
-<img src="SID-Project1.assets/image-20211008153933364.png" alt="image-20211008153933364" style="zoom:50%;" />
+​		**Bonus:** **We also support single line comment symbol `//` and multiple line comment symbol `/* */` together with nest error besides given matching rules. This part will be tested in `./test-ex/` folder.** 
 
-<img src="SID-Project1.assets/image-20211009195131279.png" alt="image-20211009195131279" style="zoom:50%;" />
+<img src="SID-Project1.assets/image-20211011164215128.png" alt="image-20211011164215128" style="zoom:50%;" />
 
 <img src="SID-Project1.assets/image-20211009200235241.png" alt="image-20211009200235241" style="zoom:50%;" />
 
@@ -81,7 +81,7 @@ public:
 
 ​			In syntaxer, we construct `vector<Node*> vec` to record the child nodes of the current node. If necessary, we can traverse the tree from root and output the whole parser tree as required.
 
-​				<img src="SID-Project1.assets/image-20211009175300149.png" alt="image-20211009175300149" style="zoom:50%;" />
+<img src="SID-Project1.assets/image-20211011164345875.png" alt="image-20211011164345875" style="zoom:50%;" />
 
 ​																Figure.2 Syntax Design
 
@@ -89,21 +89,60 @@ public:
 
 ​		`spl_node.cpp` and `spl_node.hpp` are used to define the class `Node` and declare the fields and functions about it.
 
-​		`main.cpp` are main function to start parsing and output parse tree.
+​		`main.cpp` are main function to start parsing and output the final result.
 
 
 
 ## III. Test Cases
 
-​			For evaluation purpose, our test cases contain 1 correct code, 2 type A errors and 2 type B errors. Including missing right curly braces and illegal identifier.
+​			For evaluation purpose, our test cases contain 1 correct code, 2 type A errors and 2 type B errors, including illegal identifier, hexadecimal representation errors, int overflow errors (Type A) and missing or unexpected symbols(Type B) . All of original test cases are saved in `./test/` folder.
+
+​			For extra test cases, we put them in `./test-ex/` folder which contains two test cases. They are used for testing single-line and multiple-line comment and multiple-line errors.
+
+​			**- Test case with Type A error**
+
+```spl
+struct test{
+
+    int valid_int,valid_hexint;
+    char valid_hexchar = '\x0',valid_char = '?';
+    char invalid_char = 'izfr';
+
+};
+int main(){
+    int invalid_int_1 = 0295;
+    int invalid_int_2 = 5920483965;
+
+    int invalid_hexint_1 = 0x00242;
+    int invalid_hexint_2 = 0xadg1u3;
+    int invalid_hexint_3 = 0x123456789a;
+
+    struct test test_struct;
+
+    test_struct.valid_int = 24235;
+    test_struct.valid_hexint = 0xabcdef;
+
+
+}
+```
+
+​			**- Ex-Test case with nested multiple error**
+
+```spl
+int test_2()
+{
+  int a = 0;
+  /*
+  test multi-line comment nest
+  /*  /* sdadas */ s ad a */
+  sdadasdasdas
+  cS3To3
+  */
+}
+```
 
 
 
 ## IV. Instructions
 
-​			Change directory to `/src` root and using `make splc` to create `splc` in `/bin` root for spl codes' parsing. 
-
-​			Back to main root and using `./bin/splc ./test/<file_name>` to create output parsing tree.
-
-​			
-
+​			Change directory to the root path and using `make splc` to create `splc` in `./bin` root for spl codes' parsing. Then using `./bin/splc ./test/<file_name>` to create output parsing tree.
