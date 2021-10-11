@@ -124,7 +124,8 @@ Stmt:
     | Exp error {puts(ERR_NO_SEMI.c_str());}
     | RETURN Exp error {puts(ERR_NO_SEMI.c_str());}
     | IF LP Exp error Stmt  {puts(ERR_NO_RP.c_str()); }
-    | IF error Exp RP Stmt {puts(ERR_NO_LP.c_str()); }
+    | IF LP Exp error Stmt ELSE Stmt {puts(ERR_NO_RP.c_str()); }
+    | IF error Exp RP Stmt ELSE Stmt{puts(ERR_NO_LP.c_str()); }
 ;
 
 /* local definition */

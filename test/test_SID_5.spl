@@ -8,7 +8,7 @@ int main(){
     int a = 0xe8g;
     int x = test_func_1(a b);
 
-    if(a == 0)
+    if a == 0)
     {
         a = 0;
     }
