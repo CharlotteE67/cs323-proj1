@@ -65,9 +65,9 @@ public:
 };
 ```
 
-​				We define the variable `has_err`  to record whether there exists possible lexical and syntax error for final output. We declare the illegal and error situations in detail so that we can handle all possible errors. All lexical error will be reported here with line number.
+​		We define the variable `has_err`  to record whether there exists possible lexical and syntax error for final output. We declare the illegal and error situations in detail so that we can handle all possible errors. All lexical error will be reported here with line number.
 
-​		**Bonus:** **We also support single line comment symbol `//` and multiple line comment symbol `/* */` together with nest error besides given matching rules. This part will be tested in `./test-ex/` folder.** 
+​		**Bonus:** **We also support single line comment symbol `//` and multiple line comment symbol `/* */` together with nest error besides given matching rules. This part will be tested in `./test-ex/` folder. What's more, we can support for loop when detects `for`.** 
 
 <img src="SID-Project1.assets/image-20211011164215128.png" alt="image-20211011164215128" style="zoom:50%;" />
 
@@ -81,7 +81,9 @@ public:
 
 ​			In syntaxer, we construct `vector<Node*> vec` to record the child nodes of the current node. If necessary, we can traverse the tree from root and output the whole parser tree as required.
 
-<img src="SID-Project1.assets/image-20211011164345875.png" alt="image-20211011164345875" style="zoom:50%;" />
+​			**Bonus:** **Here we can process with for statements and detect possible errors.** 
+
+![image-20211011182447115](SID-Project1.assets/image-20211011182447115.png)
 
 ​																Figure.2 Syntax Design
 
@@ -97,7 +99,7 @@ public:
 
 ​			For evaluation purpose, our test cases contain 1 correct code, 2 type A errors and 2 type B errors, including illegal identifier, hexadecimal representation errors, int overflow errors (Type A) and missing or unexpected symbols(Type B) . All of original test cases are saved in `./test/` folder.
 
-​			For extra test cases, we put them in `./test-ex/` folder which contains two test cases. They are used for testing single-line and multiple-line comment and multiple-line errors.
+​			For extra test cases, we put them in `./test-ex/` folder which contains four test cases. They are used for testing single-line, multiple-line comment and multiple-line errors and for statements.
 
 ​			**- Test case with Type A error**
 
@@ -145,4 +147,5 @@ int test_2()
 
 ## IV. Instructions
 
-​			Change directory to the root path and using `make splc` to create `splc` in `./bin` root for spl codes' parsing. Then using `./bin/splc ./test/<file_name>` to create output parsing tree.
+​			Change directory to the root path and using `make splc` to create `splc` in `./bin` root for spl codes' parsing. Then using `bin/splc test/<file_name>` to create output parsing tree. And you can use `make clean` to delete all created files.
+
